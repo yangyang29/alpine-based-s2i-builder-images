@@ -1,0 +1,28 @@
+#!/bin/sh
+
+cat <<EOF
+This is an running with 8u172-openjdk-alpine compiling with maven-3.5.3 responsible for consuming a JAVA MAVEN project
+and deploying with a SpringBoot application server.
+To use it, install S2I: https://github.com/openshift/source-to-image.
+
+Sample invocation:
+s2i build git://github.com/example/openshift-springboot-example sarcouy/s2i-springboot:jdk1.8-mvn3.5.3 springboottest
+
+You can then run the resulting image via:
+docker run -p 8080:8080 springboottest
+
+Details:
+The default Maven build arguments can be overridden by setting MAVEN_ARGS via the "--env" argument to S2I
+default MAVEN_ARGS=package -Dmaven.test.skip=true.
+The default Maven build arguments can be appended by setting MAVEN_ARGS_APPEND.
+settings.xml can be defined via MAVEN_SETTINGS
+
+If you set the "--env INCREMENTAL=true" to s2i, the sources are kept in the builded container
+to deploy to allow a reuse of sources and .m2 files, which is fast but the container can reach a size of bigger.
+If you set the "--env INCREMENTAL=false" to s2i, the sources arn't kept in the builded container
+to deploy, it allows a more lightweight container for releases, but longer to build.
+-e INCREMENTAL has default value set to true (ready to use with --incremental)
+
+In multi-module projects, you can decide which module to build by setting the "-e SELECTED_MODULE=xxxx"
+
+EOF
